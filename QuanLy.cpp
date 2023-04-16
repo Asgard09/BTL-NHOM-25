@@ -426,6 +426,42 @@ void docFile(Tuthien** head, char* fileName) {
     }
     fclose(f);
 }
+void sapxepSTT(Tuthien *tuthien) {
+    if (head == NULL || head->next == NULL) {
+        return;
+    }
+
+    Tuthien* node = head;
+    int n = 0;
+    while (node != NULL) {
+        n++;
+        node = node->next;
+    }
+
+    for (int i = 0; i < n - 1; i++) {
+        node = head;
+        for (int j = 0; j < n - i - 1; j++) {
+            if (node->stt > node->next->stt) {
+                Tuthien* temp = node->next;
+                node->next = temp->next;
+                temp->next = node;
+                if (node == head) {
+                    head = temp;
+                } else {
+                    Tuthien* prev = head;
+                    while (prev->next != node) {
+                        prev = prev->next;
+                    }
+                    prev->next = temp;
+                }
+                node = temp;
+            }
+            node = node->next;
+        }
+    }
+
+    printf("Danh sach sau khi sap xep:\n");
+}
 void ghiFile(Tuthien *tuthien, char* fileName) {
     FILE* f;
     f = fopen(fileName, "w");
@@ -578,7 +614,7 @@ void menu() {
 				clrscr();
 				printf("\n Nhap ten file: ");
 				scanf("%s",fileName);
-				ghiFile(&head,fileName);
+				ghiFile(head,fileName);
 				printf("Da ghi xong du lieu tu file %s\n", fileName);
 				break;
             case 10:
