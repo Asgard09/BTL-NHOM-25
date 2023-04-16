@@ -390,3 +390,208 @@ void thongke(Tuthien* tuthien) {
 	printf("| %-3d | %-25s | %-13s | %-12s | %-16.2f |\n", nguoiunghoitnhat->stt, nguoiunghoitnhat->ten, nguoiunghoitnhat->diachi,nguoiunghonhieunhat->ngayungho, nguoiunghoitnhat->sotien);
 	printf("+-----+---------------------------+---------------+--------------+------------------+\n");
 }
+void docFile(Tuthien** head, char* fileName) {
+    FILE* f;
+    f = fopen(fileName, "r");
+    if (f == NULL) {
+        printf("Khong the mo file %s", fileName);
+        return;
+    }
+
+    int stt;
+    char ten[50];
+    char diachi[20];
+    char ngayungho[20];
+    float sotien;
+
+    Tuthien* newNode = NULL;
+    Tuthien* lastNode = NULL;
+
+    while (fscanf(f, "%d, %s, %s, %s, %f\n", &stt, ten, diachi, ngayungho, &sotien) != EOF) {
+        newNode = (Tuthien*) malloc(sizeof(Tuthien));
+        newNode->stt = stt;
+        strcpy(newNode->ten, ten);
+        strcpy(newNode->diachi, diachi);
+        strcpy(newNode->ngayungho, ngayungho);
+        newNode->sotien = sotien;
+        newNode->next = NULL;
+
+        if (*head == NULL) {
+            *head = newNode;
+            lastNode = newNode;
+        } else {
+            lastNode->next = newNode;
+            lastNode = newNode;
+        }
+    }
+    fclose(f);
+}
+void ghiFile(Tuthien *tuthien, char* fileName) {
+    FILE* f;
+    f = fopen(fileName, "w");
+    Tuthien* node = head;
+    while (node != NULL) {
+    	fprintf(f, "%d, ", node->stt);
+        fprintf(f, "%s, ", node->ten);
+        fprintf(f, "%s, ", node->diachi);
+        fprintf(f, "%s, ", node->ngayungho);
+        fprintf(f, "%f\n", node->sotien);
+        node = node->next;
+    }
+    fclose(f);
+}
+void menu_search(){
+	clrscr();
+	int chon;
+	Tuthien *tuthien;
+	do{
+		printf("\n--------TIM KIEM----------\n");
+		printf("1. Tim kiem theo stt\n");
+		printf("2. Tim kiem theo ten\n");
+		printf("3. Tim kiem theo dia chi\n");
+		printf("4. Tim kiem theo so tien\n");
+		printf("5. Quay lai menu chinh\n");
+		printf("Nhap lua chon: ");
+		scanf("%d", &chon);
+
+		switch (chon){
+			case 1:
+				clrscr();
+				search_stt(tuthien);
+				break;
+			case 2:
+				clrscr();
+				search_ten(tuthien);
+				break;
+			case 3:
+				clrscr();
+				search_diachi(tuthien);
+				break;
+			case 4:
+				clrscr();
+				search_sotien(tuthien);
+				break;
+			case 5:
+				clrscr();
+				return;
+			default:
+				clrscr();
+				printf("Lua chon khong hop le. Chon lai\n");
+        }
+    } while (1);
+		}
+void menu_sapxep(){
+	clrscr();
+	int chon;
+	Tuthien *tuthien;
+	do {
+		printf("\n--------SAP XEP----------\n");
+		printf("1. Sap xep theo ten ABC\n");
+		printf("2. Sap xep theo dia chi ABC\n");
+		printf("3. Sap xep theo so tien\n");
+		printf("4. Quay lai menu chinh\n");
+  		printf("Nhap lua chon: ");
+        scanf("%d", &chon);
+
+        switch (chon){
+        	case 1:
+        		clrscr();
+        		sapxeptheoten(tuthien);
+        		break;
+       		case 2:
+       			clrscr();
+       			sapxeptheodiachi(tuthien);
+       			break;
+ 			case 3:
+ 				clrscr();
+ 				sapxepsotien(tuthien);
+ 				break;
+			case 4:
+				sapxepSTT(tuthien);
+				clrscr();
+				return;
+			default:
+				clrscr();
+				printf("Lua chon khong hop le. Chon lai\n");
+	}
+	}while(1);
+	clrscr();
+}
+
+void menu() {
+    int chon;
+    Tuthien *tuthien;
+    char fileName[100];
+    Tuthien* head=NULL;
+    do {
+        printf("\n-------MENU-------\n");
+        printf("1. Them\n");
+        printf("2. Sua\n");
+        printf("3. In danh sach\n");
+        printf("4. Xoa\n");
+        printf("5. Tim Kiem\n");
+        printf("6. Sap xep\n");
+        printf("7. Thong ke\n");
+        printf("8. Doc file\n");
+        printf("9. Ghi file\n");
+        printf("10. Thoat\n");
+        printf("Nhap lua chon: ");
+        scanf("%d", &chon);
+
+        switch (chon) {
+            case 1:
+            	clrscr();
+                add(tuthien);
+                break;
+            case 2:
+            	clrscr();
+                edit(tuthien);
+                break;
+            case 3:
+            	clrscr();
+                print(tuthien);
+                break;
+            case 4:
+            	clrscr();
+            	xoa(tuthien);
+            	break;
+            case 5:
+            	clrscr();
+            	menu_search();
+            	break;
+            case 6:
+            	clrscr();
+            	menu_sapxep();
+            	break;
+           	case 7:
+           		clrscr();
+           		thongke(tuthien);
+           		break;
+      		case 8:
+      			clrscr();
+				printf("\n Nhap ten file: ");
+				scanf("%s",fileName);
+				docFile(&head,fileName);
+				printf("Da doc xong du lieu tu file %s\n", fileName);
+				break;
+			case 9:
+				clrscr();
+				printf("\n Nhap ten file: ");
+				scanf("%s",fileName);
+				ghiFile(&head,fileName);
+				printf("Da ghi xong du lieu tu file %s\n", fileName);
+				break;
+            case 10:
+                printf("Goodbye!\n");
+                exit(0);
+            default:
+            	clrscr();
+                printf("Lua chon khong hop le. Chon lai\n");
+        }
+    } while (1);
+}
+
+int main() {
+    menu();
+    return 0;
+}
