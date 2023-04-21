@@ -12,6 +12,7 @@ typedef struct tuthien {
 } Tuthien;
 
 Tuthien* head = NULL;
+
 void clrscr() {
     #ifdef _WIN32
         system("cls");
@@ -19,9 +20,9 @@ void clrscr() {
         system("clear");
     #endif
 }
-void add(Tuthien *tuthien) {
+void add(Tuthien **head) {
     Tuthien* new_tuthien = (Tuthien*)malloc(sizeof(Tuthien));
-	new_tuthien->stt = 0;
+    new_tuthien->stt = 0;
     printf("Nhap ho va ten: ");
     fflush(stdin);
     gets(new_tuthien->ten);
@@ -35,11 +36,11 @@ void add(Tuthien *tuthien) {
     scanf("%f", &new_tuthien->sotien);
     new_tuthien->next = NULL;
 
-    if (head == NULL) {
-        head = new_tuthien;
-        new_tuthien->stt=1;
+    if (*head == NULL) {
+        *head = new_tuthien;
+        new_tuthien->stt = 1;
     } else {
-        Tuthien* node = head;
+        Tuthien* node = *head;
         while (node->next != NULL) {
             node = node->next;
         }
@@ -48,7 +49,7 @@ void add(Tuthien *tuthien) {
     }
     printf("Nhap thanh cong!\n");
 }
-void edit(Tuthien *tuthien) {
+void edit(Tuthien *head) {
     int stt;
     printf("Nhap STT nguoi can sua: ");
     scanf("%d", &stt);
@@ -75,7 +76,7 @@ void edit(Tuthien *tuthien) {
     printf("Khong ton tai.\n");
 }
 
-void print(Tuthien *tuthien) {
+void print(Tuthien *head) {
     printf("-------------------------------DANH SACH TU THIEN--------------------------------\n\n");
     printf("+-----+---------------------------+---------------+--------------+------------------+\n");
     printf("| %-3s | %-25s | %-13s | %-12s | %-16s |\n", "STT", "Ho va ten", "Dia chi", "Ngay ung ho", "So tien");
@@ -89,36 +90,36 @@ void print(Tuthien *tuthien) {
     printf("+-----+---------------------------+---------------+--------------+------------------+\n");
 }
 
-void xoa(Tuthien *tuthien){
+void xoa(Tuthien **head) {
     int stt;
     printf("Nhap STT nguoi can xoa: ");
     scanf("%d", &stt);
-    if (head == NULL) {
+    if (*head == NULL) {
         printf("Danh sach rong!\n");
         return;
     }
-    if (head->stt == stt) {
-        Tuthien* temp = head;
-        head = head->next;
+    if ((*head)->stt == stt) {
+        Tuthien *temp = *head;
+        *head = (*head)->next;
         free(temp);
         printf("Da xoa thanh cong!\n");
-        Tuthien* node = head;
+        Tuthien *node = *head;
         while (node != NULL) {
             node->stt--;
             node = node->next;
         }
         return;
     }
-    Tuthien* node = head;
+    Tuthien *node = *head;
     int index = 0;
     while (node->next != NULL) {
         index++;
         if (node->next->stt == stt) {
-            Tuthien* temp = node->next;
+            Tuthien *temp = node->next;
             node->next = node->next->next;
             free(temp);
-            printf("Da xoa thanh cong!");
-            Tuthien* p = node->next;
+            printf("Da xoa thanh cong!\n");
+            Tuthien *p = node->next;
             while (p != NULL) {
                 p->stt--;
                 p = p->next;
@@ -129,7 +130,7 @@ void xoa(Tuthien *tuthien){
     }
     printf("Khong tim thay STT can xoa.\n");
 }
-void search_stt(Tuthien *tuthien) {
+void search_stt(Tuthien *head) {
     int stt;
     printf("Nhap STT nguoi can tim kiem: ");
     scanf("%d", &stt);
@@ -150,7 +151,7 @@ void search_stt(Tuthien *tuthien) {
 
     printf("Khong tim thay STT can tim kiem.\n");
 }
-void search_ten(Tuthien *tuthien) {
+void search_ten(Tuthien *head) {
 	char ten[50];
     printf("Nhap ten nguoi can tim kiem: ");
     fflush(stdin);
@@ -173,7 +174,7 @@ void search_ten(Tuthien *tuthien) {
     printf("Khong tim thay ten nguoi can tim kiem.\n");
 }}
 
-void search_diachi(Tuthien *tuthien) {
+void search_diachi(Tuthien *head) {
 	char diachi[50];
     printf("Nhap dia chi nguoi can tim kiem: ");
     fflush(stdin);
@@ -195,7 +196,7 @@ void search_diachi(Tuthien *tuthien) {
 	if(dem==0){
     printf("Khong tim thay dia chi can tim kiem.\n");
 }}
-void search_sotien(Tuthien *tuthien) {
+void search_sotien(Tuthien *head) {
     float sotien;
     printf("Nhap so tien can tim kiem: ");
     scanf("%f", &sotien);
@@ -216,162 +217,102 @@ void search_sotien(Tuthien *tuthien) {
 	if(dem==0){
     printf("Khong tim thay so tien can tim kiem.\n");
 }}
-void sapxeptheoten(Tuthien *tuthien) {
-    if (head == NULL || head->next == NULL) {
-        return;
-    }
+void swap(Tuthien *a, Tuthien *b) {
+    int temp_sotien = a->sotien;
+    a->sotien = b->sotien;
+    b->sotien = temp_sotien;
 
-    Tuthien* node = head;
-    int n = 0;
-    while (node != NULL) {
-        n++;
-        node = node->next;
-    }
+    int temp_stt = a->stt;
+    a->stt = b->stt;
+    b->stt = temp_stt;
 
-    for (int i = 0; i < n - 1; i++) {
-        node = head;
-        for (int j = 0; j < n - i - 1; j++) {
-            if (strcmp(node->ten, node->next->ten) > 0) {
-                Tuthien* temp = node->next;
-                node->next = temp->next;
-                temp->next = node;
-                if (node == head) {
-                    head = temp;
-                    node = head;
-                }
-                else {
-                    Tuthien* prevNode = head;
-                    while (prevNode->next != node) {
-                        prevNode = prevNode->next;
-                    }
-                    prevNode->next = temp;
-                    node = temp;
-                }
-            }
-            else {
-                node = node->next;
-            }
-        }
-    }
-    printf("Danh sach sau khi sap xep:\n");
-    print(tuthien);
+    char temp_ten[30];
+    strcpy(temp_ten, a->ten);
+    strcpy(a->ten, b->ten);
+    strcpy(b->ten, temp_ten);
+
+    char temp_diachi[30];
+    strcpy(temp_diachi, a->diachi);
+    strcpy(a->diachi, b->diachi);
+    strcpy(b->diachi, temp_diachi);
+
+    char temp_ngayungho[20];
+    strcpy(temp_ngayungho, a->ngayungho);
+    strcpy(a->ngayungho, b->ngayungho);
+    strcpy(b->ngayungho, temp_ngayungho);
 }
-void sapxeptheodiachi(Tuthien *tuthien) {
-    if (head == NULL || head->next == NULL) {
-        return;
-    }
-
-    Tuthien* node = head;
-    int n = 0;
-    while (node != NULL) {
-        n++;
-        node = node->next;
-    }
-
-    for (int i = 0; i < n - 1; i++) {
-        node = head;
-        for (int j = 0; j < n - i - 1; j++) {
-            if (strcmp(node->diachi, node->next->diachi) > 0) {
-                Tuthien* temp = node->next;
-                node->next = temp->next;
-                temp->next = node;
-                if (node == head) {
-                    head = temp;
-                    node = head;
-                }
-                else {
-                    Tuthien* prevNode = head;
-                    while (prevNode->next != node) {
-                        prevNode = prevNode->next;
-                    }
-                    prevNode->next = temp;
-                    node = temp;
-                }
+void sapxepsotien(Tuthien* head) {
+    Tuthien *current = head, *index = NULL;
+    float temp_sotien;
+    char temp_ten[50], temp_diachi[20], temp_ngayungho[20];
+    int temp_stt;
+    while(current != NULL) {
+        index = current->next;
+        while(index != NULL) {
+            if(current->sotien > index->sotien) {
+            	swap(current,index);
             }
-            else {
-                node = node->next;
-            }
+            index = index->next;
         }
+        current = current->next;
     }
-    printf("Danh sach sau khi sap xep:\n");
-    print(tuthien);
+    printf("Danh sach da sap xep theo so tien:\n");
+    print(head);
 }
-void sapxepsotien(Tuthien *tuthien) {
-    if (head == NULL || head->next == NULL) {
-        return;
-    }
-
-    Tuthien* node = head;
-    int n = 0;
-    while (node != NULL) {
-        n++;
-        node = node->next;
-    }
-
-    for (int i = 0; i < n - 1; i++) {
-        node = head;
-        for (int j = 0; j < n - i - 1; j++) {
-            if (node->sotien > node->next->sotien) {
-                Tuthien* temp = node->next;
-                node->next = temp->next;
-                temp->next = node;
-                if (node == head) {
-                    head = temp;
-                } else {
-                    Tuthien* prev = head;
-                    while (prev->next != node) {
-                        prev = prev->next;
-                    }
-                    prev->next = temp;
-                }
-                node = temp;
+void sapxeptheoten(Tuthien* head) {
+    Tuthien *current = head, *index = NULL;
+    float temp_sotien;
+    char temp_ten[50], temp_diachi[20], temp_ngayungho[20];
+    int temp_stt;
+    while(current != NULL) {
+        index = current->next;
+        while(index != NULL) {
+            if(strcmp(current->ten, index->ten) > 0) {
+            	swap(current,index);
             }
-            node = node->next;
+            index = index->next;
         }
+        current = current->next;
     }
-
-    printf("Danh sach sau khi sap xep:\n");
-    print(tuthien);
+    printf("Danh sach da sap xep theo ten:\n");
+    print(head);
 }
-void sapxepSTT(Tuthien *tuthien) {
-    if (head == NULL || head->next == NULL) {
-        return;
-    }
-
-    Tuthien* node = head;
-    int n = 0;
-    while (node != NULL) {
-        n++;
-        node = node->next;
-    }
-
-    for (int i = 0; i < n - 1; i++) {
-        node = head;
-        for (int j = 0; j < n - i - 1; j++) {
-            if (node->stt > node->next->stt) {
-                Tuthien* temp = node->next;
-                node->next = temp->next;
-                temp->next = node;
-                if (node == head) {
-                    head = temp;
-                } else {
-                    Tuthien* prev = head;
-                    while (prev->next != node) {
-                        prev = prev->next;
-                    }
-                    prev->next = temp;
-                }
-                node = temp;
+void sapxepdiachi(Tuthien* head) {
+    Tuthien *current = head, *index = NULL;
+    float temp_sotien;
+    char temp_ten[50], temp_diachi[20], temp_ngayungho[20];
+    int temp_stt;
+    while(current != NULL) {
+        index = current->next;
+        while(index != NULL) {
+            if(strcmp(current->diachi, index->diachi) > 0) {
+                swap(current,index);
             }
-            node = node->next;
+            index = index->next;
         }
+        current = current->next;
     }
-
-    printf("Danh sach sau khi sap xep:\n");
-    print(tuthien);
+    printf("Danh sach da sap xep theo dia chi:\n");
+    print(head);
 }
-void thongke(Tuthien* tuthien) {
-    if (tuthien == NULL) {
+void sapxepSTT(Tuthien* head) {
+    Tuthien *current = head, *index = NULL;
+    float temp_sotien;
+    char temp_ten[50], temp_diachi[20], temp_ngayungho[20];
+    int temp_stt;
+    while(current != NULL) {
+        index = current->next;
+        while(index != NULL) {
+            if(current->sotien > index->sotien) {
+            	swap(current,index);
+            }
+            index = index->next;
+        }
+        current = current->next;
+    }
+}
+void thongke(Tuthien* head) {
+    if (head == NULL) {
         printf("Danh sach rong.");
         return;
     }
@@ -403,7 +344,7 @@ void thongke(Tuthien* tuthien) {
 	printf("| %-3d | %-25s | %-13s | %-12s | %-16.2f |\n", nguoiunghonhieunhat->stt, nguoiunghonhieunhat->ten, nguoiunghonhieunhat->diachi,nguoiunghonhieunhat->ngayungho, nguoiunghonhieunhat->sotien);
 	printf("+-----+---------------------------+---------------+--------------+------------------+\n");
 	printf("-----------------NGUOI UNG HO TIEN IT NHAT-----------------\n" );
-	printf("+-----+---------------------------+---------------+--------------+------------------+\n");
+	printf("+-----+---------------------------+---------------+--------------+------------------+\n\n");
 	printf("| %-3s | %-25s | %-13s | %-12s | %-16s |\n", "STT", "Ho va ten", "Dia chi", "Ngay ung ho", "So tien");
 	printf("+-----+---------------------------+---------------+--------------+------------------+\n");
 	printf("| %-3d | %-25s | %-13s | %-12s | %-16.2f |\n", nguoiunghoitnhat->stt, nguoiunghoitnhat->ten, nguoiunghoitnhat->diachi,nguoiunghonhieunhat->ngayungho, nguoiunghoitnhat->sotien);
@@ -411,58 +352,49 @@ void thongke(Tuthien* tuthien) {
 }
 void docFile(Tuthien** head, char* fileName) {
     FILE* f;
-    f = fopen(fileName, "r");
+    f = fopen(fileName, "r"); // Use "r" instead of "rt"
     if (f == NULL) {
         printf("Khong the mo file %s", fileName);
         return;
     }
-
     int stt;
     char ten[50];
     char diachi[20];
     char ngayungho[20];
     float sotien;
-
-    Tuthien* newNode = NULL;
-    Tuthien* lastNode = NULL;
-
-    while (fscanf(f, "%d, %s, %s, %s, %f\n", &stt, ten, diachi, ngayungho, &sotien) != EOF) {
-        newNode = (Tuthien*) malloc(sizeof(Tuthien));
+    Tuthien* lastNode = NULL; // Initialize to NULL
+    while (fscanf(f, "%d,%49[^,],%19[^,],%19[^,],%f\n", &stt, ten, diachi, ngayungho, &sotien) == 5) {
+        Tuthien* newNode = (Tuthien*) malloc(sizeof(Tuthien));
         newNode->stt = stt;
         strcpy(newNode->ten, ten);
         strcpy(newNode->diachi, diachi);
         strcpy(newNode->ngayungho, ngayungho);
         newNode->sotien = sotien;
         newNode->next = NULL;
-
         if (*head == NULL) {
             *head = newNode;
-            lastNode = newNode;
+            lastNode = newNode; // Update lastNode
         } else {
             lastNode->next = newNode;
-            lastNode = newNode;
+            lastNode = newNode; // Update lastNode
         }
     }
     fclose(f);
 }
-void ghiFile(Tuthien *tuthien, char* fileName) {
+
+void ghiFile(Tuthien* head, char* fileName) { // Remove pointer and use head directly
     FILE* f;
-    f = fopen(fileName, "w");
+    f = fopen(fileName, "w"); // Use "w" instead of "wt"
     Tuthien* node = head;
     while (node != NULL) {
-    	fprintf(f, "%d, ", node->stt);
-        fprintf(f, "%s, ", node->ten);
-        fprintf(f, "%s, ", node->diachi);
-        fprintf(f, "%s, ", node->ngayungho);
-        fprintf(f, "%f\n", node->sotien);
+        fprintf(f, "%d,%s,%s,%s,%f\n", node->stt, node->ten, node->diachi, node->ngayungho, node->sotien);
         node = node->next;
     }
     fclose(f);
 }
-void menu_search(){
+void menu_search(Tuthien* &head){
 	clrscr();
 	int chon;
-	Tuthien *tuthien;
 	do{
 		printf("\n--------TIM KIEM----------\n");
 		printf("1. Tim kiem theo stt\n");
@@ -476,19 +408,19 @@ void menu_search(){
 		switch (chon){
 			case 1:
 				clrscr();
-				search_stt(tuthien);
+				search_stt(head);
 				break;
 			case 2:
 				clrscr();
-				search_ten(tuthien);
+				search_ten(head);
 				break;
 			case 3:
 				clrscr();
-				search_diachi(tuthien);
+				search_diachi(head);
 				break;
 			case 4:
 				clrscr();
-				search_sotien(tuthien);
+				search_sotien(head);
 				break;
 			case 5:
 				clrscr();
@@ -499,10 +431,8 @@ void menu_search(){
         }
     } while (1);
 		}
-void menu_sapxep(){
-	clrscr();
+void menu_sapxep(Tuthien* &head){
 	int chon;
-	Tuthien *tuthien;
 	do {
 		printf("\n--------SAP XEP----------\n");
 		printf("1. Sap xep theo ten ABC\n");
@@ -515,33 +445,30 @@ void menu_sapxep(){
         switch (chon){
         	case 1:
         		clrscr();
-        		sapxeptheoten(tuthien);
+        		sapxeptheoten(head);
         		break;
        		case 2:
        			clrscr();
-       			sapxeptheodiachi(tuthien);
+       			sapxepdiachi(head);
        			break;
  			case 3:
  				clrscr();
- 				sapxepsotien(tuthien);
+ 				sapxepsotien(head);
  				break;
 			case 4:
-				clrscr();
-				sapxepSTT(tuthien);
+				sapxepSTT(head);
 				return;
+				break;
 			default:
 				clrscr();
 				printf("Lua chon khong hop le. Chon lai\n");
 	}
 	}while(1);
-	clrscr();
 }
 
 void menu() {
     int chon;
-    Tuthien *tuthien;
     char fileName[100];
-    Tuthien* head=NULL;
     do {
         printf("\n-------MENU-------\n");
         printf("1. Them\n");
@@ -560,31 +487,31 @@ void menu() {
         switch (chon) {
             case 1:
             	clrscr();
-                add(tuthien);
+                add(&head);
                 break;
             case 2:
             	clrscr();
-                edit(tuthien);
+                edit(head);
                 break;
             case 3:
             	clrscr();
-                print(tuthien);
+                print(head);
                 break;
             case 4:
             	clrscr();
-            	xoa(tuthien);
+            	xoa(&head);
             	break;
             case 5:
             	clrscr();
-            	menu_search();
+            	menu_search(head);
             	break;
             case 6:
             	clrscr();
-            	menu_sapxep();
+            	menu_sapxep(head);
             	break;
            	case 7:
            		clrscr();
-           		thongke(tuthien);
+           		thongke(head);
            		break;
       		case 8:
       			clrscr();
