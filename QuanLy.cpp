@@ -411,36 +411,31 @@ void thongke(Tuthien* head) {
 }
 void docFile(Tuthien** head, char* fileName) {
     FILE* f;
-    f = fopen(fileName, "r");
+    f = fopen(fileName, "r"); 
     if (f == NULL) {
         printf("Khong the mo file %s", fileName);
         return;
     }
-
     int stt;
     char ten[50];
     char diachi[20];
     char ngayungho[20];
     float sotien;
-
-    Tuthien* newNode = NULL;
-    Tuthien* lastNode = NULL;
-
-    while (fscanf(f, "%d,%s,%s,%s,%f\n", &stt, ten, diachi, ngayungho, &sotien) != EOF) {
-        newNode = (Tuthien*) malloc(sizeof(Tuthien));
+    Tuthien* lastNode = NULL; 
+    while (fscanf(f, "%d,%49[^,],%19[^,],%19[^,],%f\n", &stt, ten, diachi, ngayungho, &sotien) == 5) {
+        Tuthien* newNode = (Tuthien*) malloc(sizeof(Tuthien));
         newNode->stt = stt;
         strcpy(newNode->ten, ten);
         strcpy(newNode->diachi, diachi);
         strcpy(newNode->ngayungho, ngayungho);
         newNode->sotien = sotien;
         newNode->next = NULL;
-
         if (*head == NULL) {
             *head = newNode;
-            lastNode = newNode;
+            lastNode = newNode; 
         } else {
             lastNode->next = newNode;
-            lastNode = newNode;
+            lastNode = newNode; 
         }
     }
     fclose(f);
